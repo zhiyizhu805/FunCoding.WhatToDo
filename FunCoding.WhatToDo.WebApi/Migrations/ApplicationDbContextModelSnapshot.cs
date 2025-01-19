@@ -39,7 +39,7 @@ namespace FunCoding.WhatToDo.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TodoItem");
+                    b.ToTable("TodoItems");
                 });
 #pragma warning restore 612, 618
         }

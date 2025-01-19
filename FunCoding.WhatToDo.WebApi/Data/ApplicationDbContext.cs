@@ -9,5 +9,5 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<TodoItem> TodoItem { get; set; } = null!;
+    public DbSet<TodoItem> TodoItems { get; set; } = null!;
 }
