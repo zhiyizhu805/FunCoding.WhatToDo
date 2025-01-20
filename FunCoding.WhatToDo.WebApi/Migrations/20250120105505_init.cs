@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,7 +11,7 @@ namespace FunCoding.WhatToDo.WebApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TodoItem",
+                name: "TodoItems",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -21,7 +21,7 @@ namespace FunCoding.WhatToDo.WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TodoItem", x => x.Id);
+                    table.PrimaryKey("PK_TodoItems", x => x.Id);
                 });
         }
 
@@ -29,7 +29,7 @@ namespace FunCoding.WhatToDo.WebApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TodoItem");
+                name: "TodoItems");
         }
     }
 }
