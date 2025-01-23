@@ -21,10 +21,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(options =>
+    app.UseSwaggerUI(options =>
     {
-        options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        options.SwaggerEndpoint("/openapi/v1.json", "Swagger UI");
     });
+    // app.MapScalarApiReference(options =>
+    // {
+    //     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    // });
 }
 
 app.UseHttpsRedirection();
