@@ -24,7 +24,7 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetTaskById([FromRoute] Guid id)
+    public async Task<IActionResult> GetTaskById(Guid id)
     {
         var task = await _context.TaskItems.FindAsync(id);
         if (task == null)
@@ -36,28 +36,29 @@ public class TaskItemsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask(string title, string description)
+    public async Task<IActionResult> CreateTask(TaskItem newTaskItem)
     {
         var task = new Models.TaskItem
         {
-            Title = title,
-            Description = description
+            Title = newTaskItem.Title,
+            Description = newTaskItem.Description
         };
         _context.TaskItems.Add(task);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(CreateTask), new { id = task.Id }, task);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateTask(Guid id, string title, string description)
+    [HttpPut]
+    public async Task<IActionResult> UpdateTask(TaskItem taskItem)
     {
-        var task = await _context.TaskItems.FindAsync(id);
+        var task = await _context.TaskItems.FindAsync(taskItem.Id);
         if (task == null)
         {
             return NotFound();
         }
-        task.Title = title;
-        task.Description = description;
+        task.Title = taskItem.Title;
+        task.Description = taskItem.Description;
+        task.Status = taskItem.Status;
         await _context.SaveChangesAsync();
         return Ok(task);
     }
