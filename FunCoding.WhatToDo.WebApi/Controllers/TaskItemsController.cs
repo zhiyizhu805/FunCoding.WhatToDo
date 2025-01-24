@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace FunCoding.WhatToDo.WebApi.Controllers;
 
 [ApiController]
-[Route("api/tasks")]
-public class TaskController : ControllerBase
+[Route("api/taskitems")]
+public class TaskItemsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    public TaskController(ApplicationDbContext context)
+    public TaskItemsController(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -19,14 +19,14 @@ public class TaskController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllTasksAsync()
     {
-        List<Models.Task> tasks = await _context.Tasks.ToListAsync();
+        List<Models.TaskItem> tasks = await _context.TaskItems.ToListAsync();
         return Ok(tasks);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetTaskById([FromRoute] Guid id)
     {
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await _context.TaskItems.FindAsync(id);
         if (task == null)
         {
             return NotFound();
@@ -38,12 +38,12 @@ public class TaskController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask(string title, string description)
     {
-        var task = new Models.Task
+        var task = new Models.TaskItem
         {
             Title = title,
             Description = description
         };
-        _context.Tasks.Add(task);
+        _context.TaskItems.Add(task);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(CreateTask), new { id = task.Id }, task);
     }
@@ -51,7 +51,7 @@ public class TaskController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateTask(Guid id, string title, string description)
     {
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await _context.TaskItems.FindAsync(id);
         if (task == null)
         {
             return NotFound();
@@ -65,13 +65,13 @@ public class TaskController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteTaskById(Guid id)
     {
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await _context.TaskItems.FindAsync(id);
         if (task == null)
         {
             return NotFound();
         }
 
-        _context.Tasks.Remove(task);
+        _context.TaskItems.Remove(task);
         await _context.SaveChangesAsync();
         return Ok();
 

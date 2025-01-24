@@ -4,7 +4,7 @@ using FunCoding.WhatToDo.WebApi.Enums;
 namespace FunCoding.WhatToDo.WebApi.Models;
 
 
-public class Task
+public class TaskItem
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     [Required]
