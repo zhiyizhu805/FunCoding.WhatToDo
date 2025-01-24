@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FunCoding.WhatToDo.WebApi.Controllers;
 
 [ApiController]
-[Route("api/taskitems")]
+[Route("api/taskItems")]
 public class TaskItemsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
