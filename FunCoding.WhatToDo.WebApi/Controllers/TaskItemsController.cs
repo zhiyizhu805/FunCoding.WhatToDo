@@ -19,7 +19,7 @@ public class TaskItemsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllTasksAsync()
     {
-        List<Models.TaskItem> tasks = await _context.TaskItems.ToListAsync();
+        List<TaskItem> tasks = await _context.TaskItems.ToListAsync();
         return Ok(tasks);
     }
 
@@ -38,7 +38,7 @@ public class TaskItemsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask(TaskItem newTaskItem)
     {
-        var task = new Models.TaskItem
+        var task = new TaskItem
         {
             Title = newTaskItem.Title,
             Description = newTaskItem.Description
