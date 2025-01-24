@@ -9,5 +9,5 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<Task> Tasks { get; set; } = null!;
+    public DbSet<TaskItem> TaskItems { get; set; } = null!;
 }
