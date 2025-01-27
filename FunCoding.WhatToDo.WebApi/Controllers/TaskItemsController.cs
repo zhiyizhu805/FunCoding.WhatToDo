@@ -1,4 +1,5 @@
 using FunCoding.WhatToDo.WebApi.Data;
+using FunCoding.WhatToDo.WebApi.Helpers;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,12 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllTasksAsync()
+    public async Task<IActionResult> GetAllTasksAsync([FromQuery] QueryObject queryObject)
     {
-        List<TaskItem> tasks = await _context.TaskItems.ToListAsync();
-        return Ok(tasks);
+        var tasks = _context.TaskItems.AsQueryable();
+        var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+        var filteredTasks = await tasks.OrderBy(t => t.CreatedAt).Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
+        return Ok(filteredTasks);
     }
 
     [HttpGet("{id:guid}")]
