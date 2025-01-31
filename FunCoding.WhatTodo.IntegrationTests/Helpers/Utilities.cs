@@ -22,7 +22,6 @@ public static class Utilities
 
     private static void SeedDatabase(ApplicationDbContext context)
     {
-        // Create a few Contacts
         var taskItems = new List<TaskItem>
         {
             new()
