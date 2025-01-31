@@ -35,8 +35,6 @@ public class CustomIntegrationTestsFixture : WebApplicationFactory<Program>
             var scopeServices = scope.ServiceProvider;
             var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
             Utilities.InitializeDatabase(dbContext);
-
-
         });
     }
 
