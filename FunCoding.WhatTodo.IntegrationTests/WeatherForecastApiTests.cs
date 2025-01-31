@@ -1,15 +1,15 @@
+using System.Text.Json;
 using FluentAssertions;
+using FunCoding.WhatToDo.WebApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
-using JsonSerializerOptions = System.Text.Json.JsonSerializerOptions;
-using FunCoding.WhatToDo.WebApi;
-using System.Text.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using JsonSerializerOptions = System.Text.Json.JsonSerializerOptions;
 
 namespace FunCoding.WhatTodo.IntegrationTests;
 
-public class WeatherForecastApiTests(WebApplicationFactory<Program> factory): IClassFixture<WebApplicationFactory<Program>>
+public class WeatherForecastApiTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
     [Fact]
     public async Task GetWeatherForecast_ReturnsSuccessAndCorrectContentType()

@@ -49,7 +49,7 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateTask(Guid id,TaskItem updateTaskItem)
+    public async Task<IActionResult> UpdateTask(Guid id, TaskItem updateTaskItem)
     {
         var taskItem = await _context.TaskItems.FindAsync(id);
         if (taskItem == null)
