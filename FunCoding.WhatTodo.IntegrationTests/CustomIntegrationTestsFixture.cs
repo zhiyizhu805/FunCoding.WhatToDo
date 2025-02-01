@@ -12,11 +12,10 @@ public class CustomIntegrationTestsFixture : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Staging");
         builder.ConfigureAppConfiguration((context, config) =>
         {
             var basePath = AppContext.BaseDirectory;
-            var integrationTestConfigPath = Path.Combine(basePath, "appsettings.Staging.json");
+            var integrationTestConfigPath = Path.Combine(basePath, "appsettings.IntegrationTests.json");
             config.AddJsonFile(integrationTestConfigPath, optional: false, reloadOnChange: true)
                 .AddUserSecrets<CustomIntegrationTestsFixture>(optional: true, reloadOnChange: true);
         });
