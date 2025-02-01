@@ -32,13 +32,16 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         taskItems.Should().HaveCount(8);
     }
 
-    [Fact]
-    public async Task GetTasks_ReturnPaginatedTasks()
+    [Theory]
+    [InlineData(1, 5, 5)]
+    [InlineData(2, 5, 3)]
+    [InlineData(1, 10, 8)]
+    public async Task GetTasks_ReturnPaginatedTasks(int pageIndex, int pageSize, int expectedCount)
     {
         //Arrange
         var client = factory.CreateClient();
         //Act
-        var response = await client.GetAsync("/api/taskItems?pageIndex=2&pageSize=5");
+        var response = await client.GetAsync($"/api/taskItems?pageIndex={pageIndex}&pageSize={pageSize}");
         //Assert
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType.Should().NotBeNull();
@@ -50,7 +53,7 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
             PropertyNameCaseInsensitive = true
         });
         taskItems.Should().NotBeNull();
-        taskItems.Should().HaveCount(3);
+        taskItems.Should().HaveCount(expectedCount);
     }
 
     [Fact]
