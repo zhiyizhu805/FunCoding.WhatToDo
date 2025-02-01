@@ -216,13 +216,12 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var response = await client.DeleteAsync($"/api/taskItems/{id}");
         //Assert
         response.EnsureSuccessStatusCode();
-        using (var scope = factory.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var deletedTask = await db.TaskItems.FindAsync(id);
-            deletedTask.Should().BeNull();
-            Utilities.Reset(db);
-        }
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var deletedTask = await db.TaskItems.FindAsync(id);
+        deletedTask.Should().BeNull();
+        Utilities.Reset(db);
+
     }
 
     [Fact]
