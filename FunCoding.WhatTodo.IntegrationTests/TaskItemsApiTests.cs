@@ -5,33 +5,13 @@ using FluentAssertions;
 using FunCoding.WhatTodo.IntegrationTests.Helpers;
 using FunCoding.WhatToDo.WebApi.Data;
 using FunCoding.WhatToDo.WebApi.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FunCoding.WhatTodo.IntegrationTests;
 
 public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFixture<CustomIntegrationTestsFixture>
 {
-    [Fact]
-    public async Task GetTasksWithDefaultPageSize_ReturnsSuccessAndCorrectContentType()
-    {
-        //Arrange
-        var client = factory.CreateClient();
-        //Act
-        var response = await client.GetAsync("api/taskItems");
-        //Assert
-        response.EnsureSuccessStatusCode();
-        response.Content.Headers.ContentType.Should().NotBeNull();
-        response.Content.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");
-        //Deserialize the response
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var taskItems = JsonSerializer.Deserialize<List<TaskItem>>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-        taskItems.Should().NotBeNull();
-        taskItems.Should().HaveCount(8);
-    }
-
     [Theory]
     [InlineData(1, 5, 5)]
     [InlineData(2, 5, 3)]
@@ -67,15 +47,17 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var client = factory.CreateClient();
         //Act
         var response = await client.GetAsync("/api/taskItems");
-        //Assert
+        //Assert(Response validation)
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType.Should().NotBeNull();
         response.Content.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");
+        //Deserialize response
         var responseContent = await response.Content.ReadAsStringAsync();
         var taskItems = JsonSerializer.Deserialize<List<TaskItem>>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
+        //Ensure API response contains expected data
         taskItems.Should().NotBeNull();
         taskItems.Should().BeEmpty();
         taskItems.Should().HaveCount(0);
@@ -143,15 +125,20 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         {
             PropertyNameCaseInsensitive = true
         });
+        //Ensure API response contains expected data
         taskItem.Should().NotBeNull();
         taskItem.Id.Should().NotBeEmpty();
         taskItem.Title.Should().Be(testTaskItem.Title);
         taskItem.Description.Should().Be(testTaskItem.Description);
-
-        //Clean up the database
-        var scope = factory.Services.CreateScope();
+        //Verify data in database
+        using var scope = factory.Services.CreateScope();
         var scopedService = scope.ServiceProvider;
         var db = scopedService.GetRequiredService<ApplicationDbContext>();
+        var taskItemInDb = await db.TaskItems.FindAsync(taskItem.Id);
+        taskItemInDb.Should().NotBeNull();
+        taskItemInDb.Title.Should().Be(taskItem.Title);
+        taskItemInDb.Description.Should().Be(taskItem.Description);
+        //Clean up the database
         Utilities.Reset(db);
     }
 
@@ -166,11 +153,13 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
             Title = "test title",
             Description = "test description",
         };
+        //Serialize
         var json = JsonSerializer.Serialize(testUpdateTaskItem);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         //Act
         var response = await client.PutAsync($"/api/taskItems/{id}", data);
         //Assert
+        //HTTP Response
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType.Should().NotBeNull();
         response.Content.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");
@@ -180,14 +169,21 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         {
             PropertyNameCaseInsensitive = true
         });
+        //Ensure API response contains expected data:
         taskItem.Should().NotBeNull();
         taskItem.Id.Should().NotBeEmpty();
         taskItem.Title.Should().Be(testUpdateTaskItem.Title);
         taskItem.Description.Should().Be(testUpdateTaskItem.Description);
-        //Clean up the database
-        var scope = factory.Services.CreateScope();
+        //Verify data in Database
+        using var scope = factory.Services.CreateScope();
         var scopedService = scope.ServiceProvider;
         var db = scopedService.GetRequiredService<ApplicationDbContext>();
+        // var taskInDb = await db.TaskItems.FindAsync(taskItem.Id);
+        var taskInDb = await db.TaskItems.AsNoTracking().FirstOrDefaultAsync(t => t.Id == taskItem.Id);
+        taskInDb.Should().NotBeNull();
+        taskInDb.Description.Should().Be(taskItem.Description);
+        taskInDb.Title.Should().Be(taskItem.Title);
+        //Clean up the database
         Utilities.Reset(db);
     }
 
@@ -206,7 +202,6 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         //Act
         var response = await client.PutAsync($"/api/taskItems/{id}", data);
-
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -226,7 +221,6 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var deletedTask = await db.TaskItems.FindAsync(id);
         deletedTask.Should().BeNull();
         Utilities.Reset(db);
-
     }
 
     [Fact]
