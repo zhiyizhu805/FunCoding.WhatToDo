@@ -84,9 +84,9 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
     }
 
     [Theory]
-    [InlineData("8a9de219-2dde-4f2a-9ebd-b1f8df9fef03")]
-    [InlineData("798a4706-4c51-48c9-8310-531d7364c926")]
-    public async Task GetTaskById_ReturnTask_WhenTaskExists(Guid id)
+    [InlineData("8a9de219-2dde-4f2a-9ebd-b1f8df9fef03", "Read a book", "Read a book everyday and write some notes about it.")]
+    [InlineData("798a4706-4c51-48c9-8310-531d7364c926", "Have a walk", "Have a walk everyday for at least 20 mins.")]
+    public async Task GetTaskById_ReturnTask_WhenTaskExists(Guid id, string title, string description)
     {
         //Arrange
         var client = factory.CreateClient();
@@ -104,6 +104,8 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         });
         taskItem.Should().NotBeNull();
         taskItem.Id.Should().Be(id);
+        taskItem.Title.Should().Be(title);
+        taskItem.Description.Should().Be(description);
     }
 
     [Fact]
