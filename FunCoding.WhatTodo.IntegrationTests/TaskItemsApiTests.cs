@@ -12,7 +12,7 @@ namespace FunCoding.WhatTodo.IntegrationTests;
 public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFixture<CustomIntegrationTestsFixture>
 {
     [Fact]
-    public async Task GetTaskItems_ReturnsSuccessAndCorrectContentType()
+    public async Task GetTasksWithDefaultPageSize_ReturnsSuccessAndCorrectContentType()
     {
         //Arrange
         var client = factory.CreateClient();
@@ -29,7 +29,55 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
             PropertyNameCaseInsensitive = true
         });
         taskItems.Should().NotBeNull();
-        taskItems.Should().HaveCount(2);
+        taskItems.Should().HaveCount(8);
+    }
+
+    [Fact]
+    public async Task GetTasks_ReturnPaginatedTasks()
+    {
+        //Arrange
+        var client = factory.CreateClient();
+        //Act
+        var response = await client.GetAsync("/api/taskItems?pageIndex=2&pageSize=5");
+        //Assert
+        response.EnsureSuccessStatusCode();
+        response.Content.Headers.ContentType.Should().NotBeNull();
+        response.Content.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");
+        //Deserialize the response
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var taskItems = JsonSerializer.Deserialize<List<TaskItem>>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        taskItems.Should().NotBeNull();
+        taskItems.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public async Task GetTasks_ReturnsEmptyList_WhenNoTasksExist()
+    {
+        //Arrange - Empty the seed data
+        var scope = factory.Services.CreateScope();
+        var scopedService = scope.ServiceProvider;
+        var db = scopedService.GetRequiredService<ApplicationDbContext>();
+        Utilities.Cleanup(db);
+        var client = factory.CreateClient();
+        //Act
+        var response = await client.GetAsync("/api/taskItems");
+        //Assert
+        response.EnsureSuccessStatusCode();
+        response.Content.Headers.ContentType.Should().NotBeNull();
+        response.Content.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var taskItems = JsonSerializer.Deserialize<List<TaskItem>>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        taskItems.Should().NotBeNull();
+        taskItems.Should().BeEmpty();
+        taskItems.Should().HaveCount(0);
+        taskItems.Should().NotBeNull().And.BeEmpty();
+        Utilities.Reset(db);
     }
 
     [Theory]
@@ -53,7 +101,6 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         });
         taskItem.Should().NotBeNull();
         taskItem.Id.Should().Be(id);
-
     }
 
     [Fact]
@@ -65,7 +112,6 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var response = await client.GetAsync($"api/taskItems/{Guid.NewGuid()}");
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
     }
 
     [Fact]
@@ -101,7 +147,7 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var scope = factory.Services.CreateScope();
         var scopedService = scope.ServiceProvider;
         var db = scopedService.GetRequiredService<ApplicationDbContext>();
-        Utilities.Cleanup(db);
+        Utilities.Reset(db);
     }
 
     [Fact]
@@ -137,8 +183,7 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var scope = factory.Services.CreateScope();
         var scopedService = scope.ServiceProvider;
         var db = scopedService.GetRequiredService<ApplicationDbContext>();
-        Utilities.Cleanup(db);
-
+        Utilities.Reset(db);
     }
 
     [Fact]
@@ -176,7 +221,7 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var deletedTask = await db.TaskItems.FindAsync(id);
             deletedTask.Should().BeNull();
-            Utilities.Cleanup(db);
+            Utilities.Reset(db);
         }
     }
 
@@ -191,7 +236,4 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-
-
-
 }
