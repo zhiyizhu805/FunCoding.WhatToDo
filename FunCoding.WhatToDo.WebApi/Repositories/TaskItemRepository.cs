@@ -12,24 +12,24 @@ public class TaskItemRepository : ITaskItemRepository
     {
         _context = context;
     }
-    public async Task<List<TaskItem>> GetTasksAsync(int pageIndex, int pageSize)
+    public async Task<List<TaskItem>> GetTaskItemsAsync(int pageIndex, int pageSize)
     {
         return await _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
     }
 
-    public async Task<TaskItem?> GetTaskByIdAsync(Guid id)
+    public async Task<TaskItem?> GetTaskItemAsync(Guid id)
     {
         return await _context.TaskItems.FindAsync(id);
     }
 
-    public async Task<TaskItem> CreateTaskAsync(TaskItem taskItem)
+    public async Task<TaskItem> CreateTaskItemAsync(TaskItem taskItem)
     {
         _context.TaskItems.Add(taskItem);
         await _context.SaveChangesAsync();
         return taskItem;
     }
 
-    public async Task<TaskItem?> UpdateTaskAsync(Guid id, TaskItem updateTaskItem)
+    public async Task<TaskItem?> UpdateTaskItemAsync(Guid id, TaskItem updateTaskItem)
     {
         var taskItem = await _context.TaskItems.FindAsync(id);
         if (taskItem == null)
@@ -41,7 +41,7 @@ public class TaskItemRepository : ITaskItemRepository
         return taskItem;
     }
 
-    public async Task<TaskItem?> DeleteTaskByIdAsync(Guid id)
+    public async Task<TaskItem?> DeleteTaskItemAsync(Guid id)
     {
         var taskItem = await _context.TaskItems.FindAsync(id);
         if (taskItem == null)

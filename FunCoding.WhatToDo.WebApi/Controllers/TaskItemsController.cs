@@ -16,16 +16,16 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTasks(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTaskItems(int pageIndex = 1, int pageSize = 20)
     {
-        var taskItems = await _taskItemRepo.GetTasksAsync(pageIndex, pageSize);
+        var taskItems = await _taskItemRepo.GetTaskItemsAsync(pageIndex, pageSize);
         return Ok(taskItems);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetTaskById(Guid id)
+    public async Task<IActionResult> GetTaskItem(Guid id)
     {
-        var taskItem = await _taskItemRepo.GetTaskByIdAsync(id);
+        var taskItem = await _taskItemRepo.GetTaskItemAsync(id);
         if (taskItem == null)
         {
             return NotFound();
@@ -35,21 +35,21 @@ public class TaskItemsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask(TaskItem newTaskItem)
+    public async Task<IActionResult> CreateTaskItem(TaskItem newTaskItem)
     {
         var taskItem = new TaskItem
         {
             Title = newTaskItem.Title,
             Description = newTaskItem.Description
         };
-        await _taskItemRepo.CreateTaskAsync(taskItem);
-        return CreatedAtAction(nameof(CreateTask), new { id = taskItem.Id }, taskItem);
+        await _taskItemRepo.CreateTaskItemAsync(taskItem);
+        return CreatedAtAction(nameof(CreateTaskItem), new { id = taskItem.Id }, taskItem);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateTask(Guid id, TaskItem updateTaskItem)
+    public async Task<IActionResult> UpdateTaskItem(Guid id, TaskItem updateTaskItem)
     {
-        var taskItem = await _taskItemRepo.UpdateTaskAsync(id, updateTaskItem);
+        var taskItem = await _taskItemRepo.UpdateTaskItemAsync(id, updateTaskItem);
         if (taskItem == null)
         {
             return NotFound();
@@ -58,9 +58,9 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteTaskById(Guid id)
+    public async Task<IActionResult> DeleteTaskItem(Guid id)
     {
-        var taskItem = await _taskItemRepo.DeleteTaskByIdAsync(id);
+        var taskItem = await _taskItemRepo.DeleteTaskItemAsync(id);
         if (taskItem == null)
         {
             return NotFound();
