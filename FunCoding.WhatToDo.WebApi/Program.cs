@@ -1,6 +1,6 @@
 using FunCoding.WhatToDo.WebApi.Data;
 using FunCoding.WhatToDo.WebApi.Interfaces;
-using FunCoding.WhatToDo.WebApi.Repository;
+using FunCoding.WhatToDo.WebApi.repositories;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 

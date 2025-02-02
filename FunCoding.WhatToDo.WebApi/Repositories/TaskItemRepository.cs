@@ -3,7 +3,7 @@ using FunCoding.WhatToDo.WebApi.Interfaces;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunCoding.WhatToDo.WebApi.Repository;
+namespace FunCoding.WhatToDo.WebApi.repositories;
 
 public class TaskItemRepository : ITaskItemRepository
 {
