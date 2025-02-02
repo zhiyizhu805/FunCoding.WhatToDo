@@ -1,7 +1,6 @@
-using FunCoding.WhatToDo.WebApi.Data;
+using FunCoding.WhatToDo.WebApi.Interfaces;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace FunCoding.WhatToDo.WebApi.Controllers;
@@ -10,23 +9,23 @@ namespace FunCoding.WhatToDo.WebApi.Controllers;
 [Route("api/taskItems")]
 public class TaskItemsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    public TaskItemsController(ApplicationDbContext context)
+    private readonly ITaskItemRepository _taskItemRepo;
+    public TaskItemsController(ITaskItemRepository taskItemRepo)
     {
-        _context = context;
+        _taskItemRepo = taskItemRepo;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTasksAsync(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTaskItems(int pageIndex = 1, int pageSize = 20)
     {
-        var taskItems = await _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+        var taskItems = await _taskItemRepo.GetTaskItemsAsync(pageIndex, pageSize);
         return Ok(taskItems);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetTaskById(Guid id)
+    public async Task<IActionResult> GetTaskItem(Guid id)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.GetTaskItemAsync(id);
         if (taskItem == null)
         {
             return NotFound();
@@ -36,46 +35,37 @@ public class TaskItemsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask(TaskItem newTaskItem)
+    public async Task<IActionResult> CreateTaskItem(TaskItem newTaskItem)
     {
         var taskItem = new TaskItem
         {
             Title = newTaskItem.Title,
             Description = newTaskItem.Description
         };
-        _context.TaskItems.Add(taskItem);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(CreateTask), new { id = taskItem.Id }, taskItem);
+        await _taskItemRepo.CreateTaskItemAsync(taskItem);
+        return CreatedAtAction(nameof(CreateTaskItem), new { id = taskItem.Id }, taskItem);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateTask(Guid id, TaskItem updateTaskItem)
+    public async Task<IActionResult> UpdateTaskItem(Guid id, TaskItem updateTaskItem)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.UpdateTaskItemAsync(id, updateTaskItem);
         if (taskItem == null)
         {
             return NotFound();
         }
-        taskItem.Title = updateTaskItem.Title;
-        taskItem.Description = updateTaskItem.Description;
-        taskItem.Status = updateTaskItem.Status;
-        await _context.SaveChangesAsync();
         return Ok(taskItem);
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteTaskById(Guid id)
+    public async Task<IActionResult> DeleteTaskItem(Guid id)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.DeleteTaskItemAsync(id);
         if (taskItem == null)
         {
             return NotFound();
         }
-
-        _context.TaskItems.Remove(taskItem);
-        await _context.SaveChangesAsync();
         return Ok();
-
     }
 
 

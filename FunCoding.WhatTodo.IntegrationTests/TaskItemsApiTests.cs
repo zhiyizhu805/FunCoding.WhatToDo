@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
@@ -143,6 +144,23 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
     }
 
     [Fact]
+    public async Task CreateTask_ReturnsBadRequest_WhenInValidInput()
+    {
+        //Arrange
+        var client = factory.CreateClient();
+        var taskItem = new TaskItem
+        {
+            Description = "Test task item without required title property"
+        };
+        // var json = JsonSerializer.Serialize(taskItem);
+        // var data = new StringContent(json, Encoding.UTF8, "application/json");
+        //Act
+        var response = await client.PostAsJsonAsync("/api/taskItems", taskItem);
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task UpdateTask_ReturnUpdatedTask_WhenTaskExisted()
     {
         //Arrange
@@ -154,10 +172,10 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
             Description = "test description",
         };
         //Serialize
-        var json = JsonSerializer.Serialize(testUpdateTaskItem);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        // var json = JsonSerializer.Serialize(testUpdateTaskItem);
+        // var data = new StringContent(json, Encoding.UTF8, "application/json");
         //Act
-        var response = await client.PutAsync($"/api/taskItems/{id}", data);
+        var response = await client.PutAsJsonAsync($"/api/taskItems/{id}", testUpdateTaskItem);
         //Assert
         //HTTP Response
         response.EnsureSuccessStatusCode();
@@ -204,6 +222,23 @@ public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFi
         var response = await client.PutAsync($"/api/taskItems/{id}", data);
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task UpdateTask_ReturnsBadRequest_WhenInvalidInput()
+    {
+        //Arrange
+        var client = factory.CreateClient();
+        var taskItem = new TaskItem
+        {
+            Title = ""
+        };
+        // var json = JsonSerializer.Serialize(taskItem);
+        // var data = new StringContent(json, Encoding.UTF8, "application/json");
+        //Act
+        var response = await client.PutAsJsonAsync("/api/taskItems/8a9de219-2dde-4f2a-9ebd-b1f8df9fef03", taskItem);
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]

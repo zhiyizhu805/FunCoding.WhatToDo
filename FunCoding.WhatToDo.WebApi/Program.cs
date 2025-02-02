@@ -1,4 +1,6 @@
 using FunCoding.WhatToDo.WebApi.Data;
+using FunCoding.WhatToDo.WebApi.Interfaces;
+using FunCoding.WhatToDo.WebApi.repositories;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -7,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Configuration.AddUserSecrets<Program>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
