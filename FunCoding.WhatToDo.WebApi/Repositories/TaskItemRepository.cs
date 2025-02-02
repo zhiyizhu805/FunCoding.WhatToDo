@@ -12,9 +12,9 @@ public class TaskItemRepository : ITaskItemRepository
     {
         _context = context;
     }
-    public async Task<List<TaskItem>> GetTaskItemsAsync(int pageIndex, int pageSize)
+    public Task<List<TaskItem>> GetTaskItemsAsync(int pageIndex, int pageSize)
     {
-        return await _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+        return _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
     }
 
     public async Task<TaskItem?> GetTaskItemAsync(Guid id)
@@ -24,7 +24,7 @@ public class TaskItemRepository : ITaskItemRepository
 
     public async Task<TaskItem> CreateTaskItemAsync(TaskItem taskItem)
     {
-        _context.TaskItems.Add(taskItem);
+        await _context.TaskItems.AddAsync(taskItem);
         await _context.SaveChangesAsync();
         return taskItem;
     }
