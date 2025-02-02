@@ -48,10 +48,10 @@ public class TaskItemsController : ControllerBase
         return CreatedAtAction(nameof(CreateTask), new { id = taskItem.Id }, taskItem);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateTask(TaskItem updateTaskItem)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateTask(Guid id, TaskItem updateTaskItem)
     {
-        var taskItem = await _context.TaskItems.FindAsync(updateTaskItem.Id);
+        var taskItem = await _context.TaskItems.FindAsync(id);
         if (taskItem == null)
         {
             return NotFound();
