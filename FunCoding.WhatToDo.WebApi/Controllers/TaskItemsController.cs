@@ -17,7 +17,7 @@ public class TaskItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTasksAsync(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTasks(int pageIndex = 1, int pageSize = 20)
     {
         var taskItems = await _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
         return Ok(taskItems);
