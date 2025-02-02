@@ -1,4 +1,5 @@
 using FunCoding.WhatToDo.WebApi.Data;
+using FunCoding.WhatToDo.WebApi.Interfaces;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +11,23 @@ namespace FunCoding.WhatToDo.WebApi.Controllers;
 [Route("api/taskItems")]
 public class TaskItemsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    public TaskItemsController(ApplicationDbContext context)
+    private readonly ITaskItemRepository _taskItemRepo;
+    public TaskItemsController(ITaskItemRepository taskItemRepo)
     {
-        _context = context;
+        _taskItemRepo = taskItemRepo;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetTasks(int pageIndex = 1, int pageSize = 20)
     {
-        var taskItems = await _context.TaskItems.OrderBy(t => t.CreatedAt).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+        var taskItems = await _taskItemRepo.GetTasksAsync(pageIndex, pageSize);
         return Ok(taskItems);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetTaskById(Guid id)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.GetTaskByIdAsync(id);
         if (taskItem == null)
         {
             return NotFound();
@@ -43,39 +44,30 @@ public class TaskItemsController : ControllerBase
             Title = newTaskItem.Title,
             Description = newTaskItem.Description
         };
-        _context.TaskItems.Add(taskItem);
-        await _context.SaveChangesAsync();
+        await _taskItemRepo.CreateTaskAsync(taskItem);
         return CreatedAtAction(nameof(CreateTask), new { id = taskItem.Id }, taskItem);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateTask(Guid id, TaskItem updateTaskItem)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.UpdateTaskAsync(id, updateTaskItem);
         if (taskItem == null)
         {
             return NotFound();
         }
-        taskItem.Title = updateTaskItem.Title;
-        taskItem.Description = updateTaskItem.Description;
-        taskItem.Status = updateTaskItem.Status;
-        await _context.SaveChangesAsync();
         return Ok(taskItem);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteTaskById(Guid id)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await _taskItemRepo.DeleteTaskByIdAsync(id);
         if (taskItem == null)
         {
             return NotFound();
         }
-
-        _context.TaskItems.Remove(taskItem);
-        await _context.SaveChangesAsync();
         return Ok();
-
     }
 
 
