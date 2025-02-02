@@ -1,8 +1,6 @@
-using FunCoding.WhatToDo.WebApi.Data;
 using FunCoding.WhatToDo.WebApi.Interfaces;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace FunCoding.WhatToDo.WebApi.Controllers;
