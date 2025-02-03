@@ -35,7 +35,8 @@ public class TaskItemsControllerTests
         //Assert
         result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be(200);
         var okResult = result as OkObjectResult;
-        okResult!.Value.Should().BeAssignableTo<IEnumerable<TaskItem>>().Which.Should().HaveCount(fakeTaskItems.Count)
+        okResult.Should().NotBeNull();
+        okResult!.Value.Should().BeOfType<List<TaskItem>>().Which.Should().HaveCount(fakeTaskItems.Count)
             .And.BeEquivalentTo(fakeTaskItems);
         mockRepo.Verify(repo => repo.GetTaskItemsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
