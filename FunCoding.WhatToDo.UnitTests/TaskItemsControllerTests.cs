@@ -2,7 +2,9 @@ using FluentAssertions;
 using FunCoding.WhatToDo.WebApi.Controllers;
 using FunCoding.WhatToDo.WebApi.Interfaces;
 using FunCoding.WhatToDo.WebApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace FunCoding.WhatToDo.UnitTests;
@@ -39,6 +41,58 @@ public class TaskItemsControllerTests
         okResult!.Value.Should().BeOfType<List<TaskItem>>().Which.Should().HaveCount(fakeTaskItems.Count)
             .And.BeEquivalentTo(fakeTaskItems);
         mockRepo.Verify(repo => repo.GetTaskItemsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetTaskItems_ShouldReturn200Ok_WithEmptyList_WhenRepositoryReturnsEmpty()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        mockRepo.Setup(repo => repo.GetTaskItemsAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<TaskItem>());
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.GetTaskItems();
+        //Assert
+        result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be(200);
+        var okResult = result as OkObjectResult;
+        okResult.Should().NotBeNull();
+        okResult!.StatusCode.Should().Be(200);
+        ((List<TaskItem>) okResult.Value!).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetTaskItem_ShouldReturn200Ok_WithRepositoryFindsItem()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        var fakeTaskItem = new TaskItem
+        {
+            Title = "Fake task item",
+            Description = "Fake task item"
+        };
+        mockRepo.Setup(repo => repo.GetTaskItemAsync(It.IsAny<Guid>())).ReturnsAsync(fakeTaskItem);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.GetTaskItem(Guid.Parse("798a4706-4c51-48c9-8310-531d7364c926"));
+        //Assert
+        var okResult = result as OkObjectResult;
+        okResult.Should().NotBeNull();
+        okResult.StatusCode.Should().Be(200);
+        okResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(fakeTaskItem);
+
+    }
+
+    [Fact]
+    public async Task GetTaskItem_ShouldReturn404NotFound_WhenRepositoryReturnsNull()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        mockRepo.Setup(repo => repo.GetTaskItemAsync(It.IsAny<Guid>())).ReturnsAsync((TaskItem) null!);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.GetTaskItem(Guid.Parse("798a4706-4c51-48c9-8310-531d7364c926"));
+        //Assert
+        result.Should().BeOfType<NotFoundResult>();
     }
 
 }
