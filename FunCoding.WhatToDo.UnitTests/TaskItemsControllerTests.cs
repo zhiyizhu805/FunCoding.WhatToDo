@@ -115,4 +115,26 @@ public class TaskItemsControllerTests
         createdResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(newTaskItem, options=> options.Excluding(t=>t.Id).Excluding(t=>t.CreatedAt));
     }
 
+    [Fact]
+    public async Task UpdateTaskItem_ShouldReturn200Ok_WithUpdatedTaskItem_WhenRepositoryUpdatedSuccessfully()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        var updatedTaskItem = new TaskItem
+        {
+            Title = "updated task item",
+            Description = "updated task item"
+        };
+        mockRepo.Setup(repo => repo.UpdateTaskItemAsync(updatedTaskItem.Id, updatedTaskItem))
+            .ReturnsAsync(updatedTaskItem);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.UpdateTaskItem(updatedTaskItem.Id, updatedTaskItem);
+        var okResult = result as OkObjectResult;
+        //Assert
+        okResult.Should().NotBeNull();
+        okResult.StatusCode.Should().Be(200);
+        okResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(updatedTaskItem);
+    }
+
 }
