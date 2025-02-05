@@ -112,7 +112,7 @@ public class TaskItemsControllerTests
         //Assert
         createdResult.Should().NotBeNull();
         createdResult.StatusCode.Should().Be(201);
-        createdResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(newTaskItem, options=> options.Excluding(t=>t.Id).Excluding(t=>t.CreatedAt));
+        createdResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(newTaskItem, options => options.Excluding(t => t.Id).Excluding(t => t.CreatedAt));
     }
 
     [Fact]
@@ -138,6 +138,20 @@ public class TaskItemsControllerTests
     }
 
     [Fact]
+    public async Task UpdateTaskItem_ShouldReturn404NotFound_WhenRepositoryReturnsNull()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        mockRepo.Setup(repo => repo.UpdateTaskItemAsync(It.IsAny<Guid>(), new TaskItem { Title = "Test task" }))
+            .ReturnsAsync((TaskItem) null!);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.UpdateTaskItem(It.IsAny<Guid>(), new TaskItem { Title = "Test task" });
+        //Assert
+        result.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
     public async Task DeleteTaskItem_ShouldReturn200Ok_WhenRepositoryDeletesSuccessfully()
     {
         //Arrange
@@ -155,6 +169,19 @@ public class TaskItemsControllerTests
         //Assert
         okResult.Should().NotBeNull();
         okResult.StatusCode.Should().Be(200);
+    }
+
+    [Fact]
+    public async Task DeleteTask_ShouldReturn404NotFound_WhenRepositoryReturnsNull()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        mockRepo.Setup(repo => repo.DeleteTaskItemAsync(It.IsAny<Guid>())).ReturnsAsync((TaskItem) null!);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.DeleteTaskItem(It.IsAny<Guid>());
+        //Assert
+        result.Should().BeOfType<NotFoundResult>();
     }
 
 
