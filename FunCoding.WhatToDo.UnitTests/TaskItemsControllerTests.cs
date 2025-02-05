@@ -94,5 +94,25 @@ public class TaskItemsControllerTests
         //Assert
         result.Should().BeOfType<NotFoundResult>();
     }
+    [Fact]
+    public async Task CreateTaskItem_ShouldReturn201Created_WithCreatedTaskItem_WhenRepositoryCreatesSuccessfully()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        var newTaskItem = new TaskItem
+        {
+            Title = "new task item",
+            Description = "new task item"
+        };
+        mockRepo.Setup(repo => repo.CreateTaskItemAsync(It.IsAny<TaskItem>())).ReturnsAsync(newTaskItem);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.CreateTaskItem(newTaskItem);
+        var createdResult = result as CreatedAtActionResult;
+        //Assert
+        createdResult.Should().NotBeNull();
+        createdResult.StatusCode.Should().Be(201);
+        createdResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(newTaskItem, options=> options.Excluding(t=>t.Id).Excluding(t=>t.CreatedAt));
+    }
 
 }
