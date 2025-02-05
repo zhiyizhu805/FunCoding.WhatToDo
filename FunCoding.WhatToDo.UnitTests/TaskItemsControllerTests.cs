@@ -137,4 +137,26 @@ public class TaskItemsControllerTests
         okResult.Value.Should().BeOfType<TaskItem>().Which.Should().BeEquivalentTo(updatedTaskItem);
     }
 
+    [Fact]
+    public async Task DeleteTaskItem_ShouldReturn200Ok_WhenRepositoryDeletesSuccessfully()
+    {
+        //Arrange
+        var mockRepo = new Mock<ITaskItemRepository>();
+        var taskItem = new TaskItem
+        {
+            Title = "task item",
+            Description = "task item"
+        };
+        mockRepo.Setup(repo => repo.DeleteTaskItemAsync(taskItem.Id)).ReturnsAsync(taskItem);
+        var controller = new TaskItemsController(mockRepo.Object);
+        //Act
+        var result = await controller.DeleteTaskItem(taskItem.Id);
+        var okResult = result as OkResult;
+        //Assert
+        okResult.Should().NotBeNull();
+        okResult.StatusCode.Should().Be(200);
+    }
+
+
+
 }
