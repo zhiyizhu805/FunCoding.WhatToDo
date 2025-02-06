@@ -1,4 +1,4 @@
-using FunCoding.WhatTodo.IntegrationTests.Helpers;
+using FunCoding.WhatToDo.IntegrationTests.Helpers;
 using FunCoding.WhatToDo.WebApi.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FunCoding.WhatTodo.IntegrationTests;
+namespace FunCoding.WhatToDo.IntegrationTests;
 
 public class CustomIntegrationTestsFixture : WebApplicationFactory<Program>
 {
