@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunCoding.WhatToDo.WebApi", "FunCoding.WhatToDo.WebApi\FunCoding.WhatToDo.WebApi.csproj", "{2A353F9A-16F6-4134-B9E8-FA235EDE215F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunCoding.WhatTodo.IntegrationTests", "FunCoding.WhatTodo.IntegrationTests\FunCoding.WhatTodo.IntegrationTests.csproj", "{3AB0DDA7-9EBE-44E6-97CD-0A55E612E197}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunCoding.WhatToDorename.IntegrationTests", "FunCoding.WhatToDorename.IntegrationTests\FunCoding.WhatToDorename.IntegrationTests.csproj", "{3AB0DDA7-9EBE-44E6-97CD-0A55E612E197}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunCoding.WhatToDo.UnitTests", "FunCoding.WhatToDo.UnitTests\FunCoding.WhatToDo.UnitTests.csproj", "{B21057C3-8C2E-420B-9D93-4181809A1BB0}"
 EndProject

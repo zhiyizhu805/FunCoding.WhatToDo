@@ -8,6 +8,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <UserSecretsId>4a15988b-45fb-4bc5-95cd-b77f5aaad8ed</UserSecretsId>
+        <RootNamespace>FunCoding.WhatTodo.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
