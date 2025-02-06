@@ -65,7 +65,7 @@ public class TaskItemsController : ControllerBase
         {
             return NotFound();
         }
-        return Ok();
+        return NoContent();
     }
 
 }
