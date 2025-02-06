@@ -3,13 +3,14 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
-using FunCoding.WhatTodo.IntegrationTests.Helpers;
+using FunCoding.WhatToDo.IntegrationTests.Helpers;
 using FunCoding.WhatToDo.WebApi.Data;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FunCoding.WhatTodo.IntegrationTests;
+
+namespace FunCoding.WhatToDo.IntegrationTests;
 
 public class TaskItemsApiTests(CustomIntegrationTestsFixture factory) : IClassFixture<CustomIntegrationTestsFixture>
 {

@@ -2,7 +2,7 @@ using FunCoding.WhatToDo.WebApi.Data;
 using FunCoding.WhatToDo.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunCoding.WhatTodo.IntegrationTests.Helpers;
+namespace FunCoding.WhatToDo.IntegrationTests.Helpers;
 
 public static class Utilities
 {
